@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getFirestore, collection, query, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
-import { app, auth } from '../../../../firebase';
+import { getFirestore, collection, query, getDocs, addDoc, } from 'firebase/firestore';
+import { app, } from '../../../../firebase';
 import admin from "../../../../@lib/firebaseAdmin"; // Initialize Firebase Admin here
 const db = getFirestore(app);
 

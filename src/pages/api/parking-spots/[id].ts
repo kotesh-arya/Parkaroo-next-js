@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 // import { db } from "@/firebase";
 import { getFirestore, doc, deleteDoc, getDoc } from "firebase/firestore";
-import { app, auth } from '../../../../firebase';
+import { app } from '../../../../firebase';
 import admin from "../../../../@lib/firebaseAdmin"; // Initialize Firebase Admin here
 const db = getFirestore(app);
 
@@ -35,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             const token = authHeader.split(" ")[1];
-            const decodedToken = await admin.auth().verifyIdToken(token);
+            await admin.auth().verifyIdToken(token);
 
 
             // Reference the document in Firestore
