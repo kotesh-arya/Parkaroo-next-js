@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const spots = await getParkingSpots();
       res.status(200).json(spots);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch parking spots" });
+      res.status(500).json({ error });
     }
   }
   else if (req.method === "POST") {
