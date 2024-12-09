@@ -37,10 +37,8 @@ const addParkingSpot = async (spotData: { name: string, latitude: string, longit
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  console.log("from main request");
 
   if (req.method === "GET") {
-    console.log("inside get method");
     try {
       const spots = await getParkingSpots();
       res.status(200).json(spots);

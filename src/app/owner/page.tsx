@@ -127,7 +127,6 @@ const OwnerDashboard = () => {
       }
 
       const token = await user.getIdToken();
-      console.log("calling the delete record api from frontend with ID", id);
 
       const res = await fetch(`/api/parking-spots/${id}`, {
         method: "DELETE",

@@ -1,7 +1,6 @@
 import admin from "firebase-admin";
 
 if (!admin.apps.length) {
-    console.log("Environment Variable:", process.env.FIREBASE_SERVICE_ACCOUNT_KEY); // Mask sensitive parts
 
     if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
         throw new Error("FIREBASE_SERVICE_ACCOUNT_KEY environment variable is missing");
@@ -16,7 +15,6 @@ if (!admin.apps.length) {
             credential: admin.credential.cert(serviceAccountKey),
         });
 
-        console.log("Firebase Admin initialized successfully.");
     } catch (error: any) {
         console.error("Failed to initialize Firebase Admin:", error.message);
         throw new Error("Invalid FIREBASE_SERVICE_ACCOUNT_KEY");

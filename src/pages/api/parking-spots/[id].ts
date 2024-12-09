@@ -37,7 +37,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const token = authHeader.split(" ")[1];
             const decodedToken = await admin.auth().verifyIdToken(token);
 
-            console.log("User authenticated:", decodedToken.uid);
 
             // Reference the document in Firestore
             const docRef = doc(db, "parking-spots", id);
