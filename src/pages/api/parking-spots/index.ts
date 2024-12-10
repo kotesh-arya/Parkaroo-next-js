@@ -1,13 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getFirestore, collection, query, getDocs, addDoc, } from 'firebase/firestore';
+import { getFirestore, collection, query, getDocs, addDoc, where } from 'firebase/firestore';
 import { app, } from '../../../../firebase';
 import admin from "../../../../@lib/firebaseAdmin"; // Initialize Firebase Admin here
 const db = getFirestore(app);
 
 // Fetch all parking spots
-const getParkingSpots = async () => {
+const getParkingSpots = async (userUID: string) => {
   try {
-    const q = query(collection(db, 'parking-spots'));
+    const q = query(
+      collection(db, 'parking-spots'),
+      where('user', '==', userUID) // Filter by userUID
+    );
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -39,11 +42,17 @@ const addParkingSpot = async (spotData: { name: string, latitude: string, longit
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method === "GET") {
+    const ownerId = req.query.userUID;
+
+    if (typeof ownerId !== "string") {
+      return res.status(400).json({ error: "Invalid or missing userUID parameter" });
+    }
+
     try {
-      const spots = await getParkingSpots();
+      const spots = await getParkingSpots(ownerId);
       res.status(200).json(spots);
-    } catch (error) {
-      res.status(500).json({ error });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message || "Internal Server Error" });
     }
   }
   else if (req.method === "POST") {
