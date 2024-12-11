@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { auth } from "../../../firebase";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { DeleteConfirmModal } from "../components/DeleteConfirmModal";
 
 interface Spot {
   id: string;
@@ -50,6 +51,9 @@ const OwnerDashboard = () => {
   });
   const [showModal, setShowModal] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("");
+  const [isDeleteModalVisible, setDeleteModalVisible] =
+    useState<boolean>(false);
+  const [deleteSpotId, setDeleteSpotId] = useState<string | null>(null);
 
   const {
     register,
@@ -148,6 +152,11 @@ const OwnerDashboard = () => {
   };
 
   const handleDeleteSpot = async (id: string) => {
+    const confirmed = confirm(
+      "Are you sure you want to delete this parking spot?"
+    );
+    if (!confirmed) return;
+
     setLoading(true);
     setLoadingMessage("Deleting spot...");
     try {
@@ -193,9 +202,60 @@ const OwnerDashboard = () => {
     }
   };
 
+  const handleShowDeleteModal = (id: string) => {
+    setDeleteSpotId(id);
+    setDeleteModalVisible(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteSpotId) return;
+
+    setDeleteModalVisible(false);
+    setLoading(true);
+    setLoadingMessage("Deleting spot...");
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      const token = await user.getIdToken();
+      const res = await fetch(`/api/parking-spots/${deleteSpotId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to delete parking spot");
+      }
+
+      setSpots((prev) => prev.filter((spot) => spot.id !== deleteSpotId));
+    } catch (error) {
+      console.error("Error deleting parking spot:", error);
+    } finally {
+      setLoading(false);
+      setLoadingMessage("");
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModalVisible(false);
+    setDeleteSpotId(null);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6">
       {loading && loadingMessage && <LoadingModal message={loadingMessage} />}
+
+      <DeleteConfirmModal
+        isVisible={isDeleteModalVisible}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
 
       {/* The rest of your UI remains unchanged */}
 
@@ -250,7 +310,7 @@ const OwnerDashboard = () => {
               </p>
               <p>Price: ${spot.pricePerHour}/hour</p>
               <button
-                onClick={() => handleDeleteSpot(spot.id)}
+                onClick={() =>  handleShowDeleteModal(spot.id)}
                 className="delete-button px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700"
               >
                 Delete
