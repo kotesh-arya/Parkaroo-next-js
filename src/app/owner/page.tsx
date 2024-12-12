@@ -151,43 +151,6 @@ const OwnerDashboard = () => {
     }
   };
 
-  const handleDeleteSpot = async (id: string) => {
-    const confirmed = confirm(
-      "Are you sure you want to delete this parking spot?"
-    );
-    if (!confirmed) return;
-
-    setLoading(true);
-    setLoadingMessage("Deleting spot...");
-    try {
-      const user = auth.currentUser;
-      if (!user) {
-        throw new Error("User not authenticated");
-      }
-
-      const token = await user.getIdToken();
-      const res = await fetch(`/api/parking-spots/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to delete parking spot");
-      }
-
-      setSpots((prev) => prev.filter((spot) => spot.id !== id));
-    } catch (error) {
-      console.error("Error deleting parking spot:", error);
-    } finally {
-      setLoading(false);
-      setLoadingMessage("");
-    }
-  };
-
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -271,19 +234,39 @@ const OwnerDashboard = () => {
           Your Parking Spots
         </h1>
 
-        <div className="bg-gray-100 p-4 rounded-lg mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
+        <div className="bg-white p-6 rounded-lg shadow-md mb-6 max-w-md mx-auto">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span className="material-icons text-blue-500">person</span>
             User Information
           </h2>
-          <div className="space-y-2">
-            <p className="text-gray-700">
-              <span className="font-medium">Name:</span>{" "}
-              {user.userName || "Not logged in"}
-            </p>
-            <p className="text-gray-700">
-              <span className="font-medium">Email:</span>{" "}
-              {user.userEmail || "No email available"}
-            </p>
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <span className="material-icons text-gray-500">badge</span>
+              <p className="text-gray-700">
+                <span className="font-semibold">Name:</span>{" "}
+                {user.userName || (
+                  <span className="text-red-500 font-medium">
+                    Not logged in
+                  </span>
+                )}
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="material-icons text-gray-500">email</span>
+              <p className="text-gray-700">
+                <span className="font-semibold">Email:</span>{" "}
+                {user.userEmail || (
+                  <span className="text-red-500 font-medium">
+                    No email available
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+          <div className="mt-4">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+              Edit Information
+            </button>
           </div>
         </div>
 
@@ -310,7 +293,7 @@ const OwnerDashboard = () => {
               </p>
               <p>Price: ${spot.pricePerHour}/hour</p>
               <button
-                onClick={() =>  handleShowDeleteModal(spot.id)}
+                onClick={() => handleShowDeleteModal(spot.id)}
                 className="delete-button px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700"
               >
                 Delete
