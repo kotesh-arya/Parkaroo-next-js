@@ -236,7 +236,6 @@ const OwnerDashboard = () => {
 
         <div className="bg-white p-6 rounded-lg shadow-md mb-6 max-w-md mx-auto">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <span className="material-icons text-blue-500">person</span>
             User Information
           </h2>
           <div className="space-y-4">

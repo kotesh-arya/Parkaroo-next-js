@@ -1,101 +1,198 @@
-import Image from "next/image";
-
+"use client";
+import { useState } from "react";
+import Link from "next/link";
 export default function Home() {
+  const [hamburgerVisibility, setHamburgerVisibility] = useState(false);
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="bg-white">
+      <header className="absolute inset-x-0 top-0 z-50">
+        <nav
+          className="flex items-center justify-between p-6 lg:px-8"
+          aria-label="Global"
+        >
+          <div className="flex lg:flex-1">
+            <a href="#" className="-m-1.5 p-1.5">
+              <img className="h-20" src="./Parkaroo-logo.png" alt="" />
+            </a>
+          </div>
+          <div className="flex lg:hidden">
+            <button
+              type="button"
+              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+              onClick={() => {
+                setHamburgerVisibility(!hamburgerVisibility);
+              }}
+            >
+              <span className="sr-only">Open main menu</span>
+              <svg
+                className="size-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+                data-slot="icon"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+            </button>
+          </div>
+          {/* Center navbar hidden as of now */}
+          {/* <div className="hidden lg:flex lg:gap-x-12">
+            <a href="#" className="text-sm/6 font-semibold text-gray-900">
+              Product
+            </a>
+            <a href="#" className="text-sm/6 font-semibold text-gray-900">
+              Features
+            </a>
+            <a href="#" className="text-sm/6 font-semibold text-gray-900">
+              Marketplace
+            </a>
+            <a href="#" className="text-sm/6 font-semibold text-gray-900">
+              Company
+            </a>
+          </div> */}
+          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+            {/* <a href="#" className="text-sm/6 font-semibold text-gray-900">
+              Log in 
+            </a> */}
+            {/* <Link
+              href="/auth"
+              className="text-sm/6 font-semibold text-gray-900"
+            >
+              Log-in | Sign-up <span aria-hidden="true">&rarr;</span>
+            </Link> */}
+          </div>
+        </nav>
+        {/* <!-- Mobile menu, show/hide based on menu open state. --> */}
+        <div
+          className={`lg:hidden ${hamburgerVisibility ? "none" : "hidden"}`}
+          role="dialog"
+          aria-modal="true"
+        >
+          {/* <!-- Background backdrop, show/hide based on slide-over state. --> */}
+          <div className="fixed inset-0 z-50"></div>
+          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+            <div className="flex items-center justify-between">
+              <a href="#" className="-m-1.5 p-1.5">
+                <span className="sr-only">Your Company</span>
+                <img
+                  className="h-8 w-auto"
+                  src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+                  alt=""
+                />
+              </a>
+              <button
+                type="button"
+                className="-m-2.5 rounded-md p-2.5 text-gray-700"
+                onClick={() => {
+                  setHamburgerVisibility(!hamburgerVisibility);
+                }}
+              >
+                <span className="sr-only">Close menu</span>
+                <svg
+                  className="size-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  data-slot="icon"
+                >
+                  <path
+                    strokeLinecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            {/* <div className="mt-6 flow-root">
+              <div className="-my-6 divide-y divide-gray-500/10">
+                <div className="space-y-2 py-6">
+                  <a
+                    href="#"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    Product
+                  </a>
+                  <a
+                    href="#"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    Features
+                  </a>
+                  <a
+                    href="#"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    Marketplace
+                  </a>
+                  <a
+                    href="#"
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    Company
+                  </a>
+                </div>
+                <div className="py-6">
+                  <a
+                    href="#"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    Log in
+                  </a>
+                </div>
+              </div>
+            </div> */}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      </header>
+
+      <div className="relative isolate px-6 pt-14 lg:px-8 py-16 h-screen   ">
+        <div
+          className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80 "
+          aria-hidden="true"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"></div>
+        </div>
+        <div className="mx-auto max-w-2xl py-20 sm:py-32  ">
+          {/* <div className="hidden sm:mb-8 sm:flex sm:justify-center">
+            <div className="relative rounded-full px-3 py-1 text-sm/6 text-gray-600 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+              Announcing our next round of funding.{" "}
+              <a href="#" className="font-semibold text-indigo-600">
+                <span className="absolute inset-0" aria-hidden="true"></span>
+                Read more <span aria-hidden="true">&rarr;</span>
+              </a>
+            </div>
+          </div> */}
+          <div className="text-center">
+            <h1 className="text-balance text-5xl font-semibold tracking-tight text-gray-900 sm:text-7xl">
+              Hassle-Free Parking at Your Fingertips
+            </h1>
+            <p className="mt-8 text-pretty text-lg font-medium text-gray-500 sm:text-xl/8">
+              Revolutionizing parking for drivers and owners. Because every
+              space deserves a purpose.
+            </p>
+            <div className="mt-10 flex items-center justify-center gap-x-6">
+              <Link
+                href="/auth"
+                className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Get started <span aria-hidden="true">&rarr;</span>
+              </Link>
+
+              {/* <a href="#" className="text-sm/6 font-semibold text-gray-900">
+                Learn more <span aria-hidden="true">→</span>
+              </a> */}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
