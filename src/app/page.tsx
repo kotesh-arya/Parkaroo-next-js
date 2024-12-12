@@ -7,7 +7,7 @@ export default function Home() {
     <div className="bg-white">
       <header className="absolute inset-x-0 top-0 z-50">
         <nav
-          className="flex items-center justify-between p-6 lg:px-8"
+          className="flex items-center justify-between px-6 lg:px-8"
           aria-label="Global"
         >
           <div className="flex lg:flex-1">
@@ -105,7 +105,7 @@ export default function Home() {
                 >
                   <path
                     strokeLinecap="round"
-                    stroke-linejoin="round"
+                    strokeLinejoin="round"
                     d="M6 18 18 6M6 6l12 12"
                   />
                 </svg>
