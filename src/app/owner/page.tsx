@@ -64,6 +64,8 @@ const OwnerDashboard = () => {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      console.log(currentUser, "currentUser here");
+
       if (currentUser) {
         let userName = currentUser.displayName;
         if (!userName && currentUser.email) {
@@ -99,6 +101,7 @@ const OwnerDashboard = () => {
       setLoadingMessage("");
     }
   }
+  console.log(user, "user");
 
   useEffect(() => {
     if (user.userUID) {
@@ -240,15 +243,15 @@ const OwnerDashboard = () => {
           </h2>
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <span className="material-icons text-gray-500">badge</span>
-              <p className="text-gray-700">
+              {/* <span className="material-icons text-gray-500">badge</span> */}
+              {/* <p className="text-gray-700">
                 <span className="font-semibold">Name:</span>{" "}
                 {user.userName || (
                   <span className="text-red-500 font-medium">
                     Not logged in
                   </span>
                 )}
-              </p>
+              </p> */}
             </div>
             <div className="flex items-center gap-4">
               <span className="material-icons text-gray-500">email</span>

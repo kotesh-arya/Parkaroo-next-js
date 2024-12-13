@@ -4,7 +4,7 @@ import { app, } from '../../../../firebase';
 import admin from "../../../../@lib/firebaseAdmin"; // Initialize Firebase Admin here
 const db = getFirestore(app);
 
-// Fetch all parking spots
+// Fetch parking spots of a particular owner by their userId
 const getParkingSpots = async (userUID: string) => {
   try {
     const q = query(
@@ -19,6 +19,25 @@ const getParkingSpots = async (userUID: string) => {
   } catch (error) {
     console.error('Error fetching parking spots:', error);
     throw new Error('Failed to fetch parking spots');
+  }
+};
+
+// Fetch all parking spots for a driver
+// TODO: Instead of showing all parking spots, only show nearby spots within 1KM range(will be modified later)
+const getAllParkingSpots = async () => {
+  try {
+    const q = query(
+      collection(db, 'parking-spots'),
+
+    );
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error('Error fetching All parking spots:', error);
+    throw new Error('Failed to fetch All parking spots');
   }
 };
 
@@ -44,15 +63,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === "GET") {
     const ownerId = req.query.userUID;
 
-    if (typeof ownerId !== "string") {
-      return res.status(400).json({ error: "Invalid or missing userUID parameter" });
-    }
-
-    try {
-      const spots = await getParkingSpots(ownerId);
-      res.status(200).json(spots);
-    } catch (error: any) {
-      res.status(500).json({ error: error.message || "Internal Server Error" });
+    if (typeof ownerId === "string") {
+      try {
+        const spots = await getParkingSpots(ownerId);
+        res.status(200).json(spots);
+      } catch (error: any) {
+        res.status(500).json({ error: error.message || "Internal Server Error" });
+      }
+    } else {
+      try {
+        const spots = await getAllParkingSpots();
+        res.status(200).json(spots);
+      } catch (error: any) {
+        res.status(500).json({ error: error.message || "Internal Server Error" });
+      }
     }
   }
   else if (req.method === "POST") {
