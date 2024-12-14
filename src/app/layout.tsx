@@ -5,6 +5,8 @@ import "./globals.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
+// Leaflet maps css 
 import "leaflet/dist/leaflet.css";
 
 

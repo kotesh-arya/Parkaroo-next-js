@@ -2,11 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+
+import "leaflet/dist/leaflet.css";
+import L from "leaflet"; // Import L from leaflet
 import axios from "axios";
 import { auth } from "../../../firebase";
 import { signOut } from "firebase/auth";
-import L from "leaflet"; // For creating custom marker icons
-import { LatLngExpression } from "leaflet"; // For creating custom marker icons
+
+
 
 // Define the Spot type
 type Spot = {
@@ -15,7 +18,13 @@ type Spot = {
   latitude: number;
   longitude: number;
 };
-
+// const Map = dynamic(() => import("../components/Map"), { ssr: false });
+const customIcon = L.icon({
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png", // Path to your custom marker image
+  iconSize: [32, 32], // Size of the icon [width, height]
+  iconAnchor: [16, 32], // Anchor of the icon (centered at the bottom)
+  popupAnchor: [0, -32], // Anchor of the popup relative to the icon
+});
 const DriverPage = () => {
   const [parkingSpots, setParkingSpots] = useState<Spot[]>([]); // Use Spot[] type for the array
   const [loading, setLoading] = useState<boolean>(true);
@@ -54,32 +63,6 @@ const DriverPage = () => {
       console.error("Error signing out:", error);
     }
   };
-
-  // Create a custom marker icon for Leaflet
-  const customIcon = new L.Icon({
-    iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png", // Leaflet's default marker
-    iconSize: [25, 41], // Marker size
-    iconAnchor: [12, 41], // Marker anchor point
-    popupAnchor: [1, -34], // Popup anchor point
-  });
-
-  useEffect(() => {
-    const position: LatLngExpression = [51.5, -0.09];
-
-    const map = L.map("map").setView(position, 13);
-
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution:
-        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    }).addTo(map);
-
-    L.marker(position).addTo(map);
-
-    return () => {
-      map.remove();
-    };
-  }, []);
 
   return (
     <div className="driver-page min-h-screen bg-gray-50">
