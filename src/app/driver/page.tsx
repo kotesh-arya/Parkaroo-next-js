@@ -90,8 +90,9 @@ const DriverPage = () => {
 
       // setParkingSpots(response.data);
       setParkingSpots(mockParkingSpots);
-    } catch (err) {
+    } catch (err: any) {
       setError("Failed to load parking spots.");
+      console.error(err);
     } finally {
       setLoading(false);
     }

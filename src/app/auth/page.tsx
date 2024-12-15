@@ -36,7 +36,6 @@ const Auth = () => {
           email,
           password
         );
-        const user = userCredential.user;
 
         // Check the user's role if needed during sign-in
         toast.success("Signed in successfully!");
@@ -65,7 +64,6 @@ const Auth = () => {
     setGoogleSignInLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
 
       // Handle Google Sign-In role assignment (optional)
       toast.success("Signed in with Google successfully!");
