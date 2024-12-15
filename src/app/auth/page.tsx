@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { googleProvider, auth } from "../../../firebase"; // Import your firebase configuration
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -31,11 +32,7 @@ const Auth = () => {
     setLoading(true);
     try {
       if (isLogin) {
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+        await signInWithEmailAndPassword(auth, email, password);
 
         // Check the user's role if needed during sign-in
         toast.success("Signed in successfully!");
@@ -70,6 +67,7 @@ const Auth = () => {
       router.push("/owner");
     } catch (error: any) {
       toast.error(`Google Sign-In Error: ${error.message}`);
+      console.error(error);
     } finally {
       setGoogleSignInLoading(false);
     }
@@ -77,13 +75,15 @@ const Auth = () => {
 
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img
-          className="mx-auto h-10 w-auto"
-          src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm ">
+        <Image
+          className="mx-auto "
+          src="/Parkaroo-logo.png"
           alt="Parkaroo"
+          width={80}
+          height={80}
         />
-        <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+        <h2 className="mt-0 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
           {isLogin ? "Sign in to your account" : "Create your account"}
         </h2>
       </div>
