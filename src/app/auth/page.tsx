@@ -60,7 +60,7 @@ const Auth = () => {
   const handleGoogleSignIn = async () => {
     setGoogleSignInLoading(true);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
+      await signInWithPopup(auth, googleProvider);
 
       // Handle Google Sign-In role assignment (optional)
       toast.success("Signed in with Google successfully!");

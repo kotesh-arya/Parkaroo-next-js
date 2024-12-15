@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
+
 export default function Home() {
   const [hamburgerVisibility, setHamburgerVisibility] = useState(false);
   return (
@@ -12,7 +14,13 @@ export default function Home() {
         >
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
-              <img className="h-20" src="./Parkaroo-logo.png" alt="" />
+              <Image
+                className="h-20"
+                width={80}
+                height={80}
+                src="/Parkaroo-logo.png"
+                alt=""
+              />
             </a>
           </div>
           <div className="flex lg:hidden">
@@ -80,10 +88,12 @@ export default function Home() {
             <div className="flex items-center justify-between">
               <a href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">Your Company</span>
-                <img
-                  className="h-8 w-auto"
-                  src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=600"
-                  alt=""
+                <Image
+                  className="mx-auto "
+                  src="/Parkaroo-logo.png"
+                  alt="Parkaroo"
+                  width={80}
+                  height={80}
                 />
               </a>
               <button
