@@ -9,14 +9,14 @@ import axios from "axios";
 import { auth } from "../../../firebase";
 import { signOut } from "firebase/auth";
 
-
-
 // Define the Spot type
 type Spot = {
   id: string;
   name: string;
   latitude: number;
   longitude: number;
+  pricePerHour: number;
+  user: string;
 };
 // const Map = dynamic(() => import("../components/Map"), { ssr: false });
 const customIcon = L.icon({
@@ -25,24 +25,71 @@ const customIcon = L.icon({
   iconAnchor: [16, 32], // Anchor of the icon (centered at the bottom)
   popupAnchor: [0, -32], // Anchor of the popup relative to the icon
 });
+
+const mockParkingSpots: Spot[] = [
+  {
+    id: "1",
+    name: "From PC",
+    pricePerHour: 22,
+    user: "1i5aszgMSGSujSNRqZ74lU9nF9f1",
+    latitude: 37.7749,
+    longitude: -122.4194,
+  },
+  {
+    id: "2",
+    name: "From PC",
+    pricePerHour: 22,
+    user: "1i5aszgMSGSujSNRqZ74lU9nF9f1",
+    latitude: 37.7763,
+    longitude: -122.4175,
+  },
+  {
+    id: "3",
+    name: "From PC",
+    pricePerHour: 22,
+    user: "1i5aszgMSGSujSNRqZ74lU9nF9f1",
+    latitude: 37.7732,
+    longitude: -122.424,
+  },
+  {
+    id: "4",
+    name: "From PC",
+    pricePerHour: 22,
+    user: "1i5aszgMSGSujSNRqZ74lU9nF9f1",
+    latitude: 37.7781,
+    longitude: -122.4191,
+  },
+  {
+    id: "5",
+    name: "From PC",
+    pricePerHour: 22,
+    user: "1i5aszgMSGSujSNRqZ74lU9nF9f1",
+    latitude: 37.7694,
+    longitude: -122.4862,
+  },
+];
+
 const DriverPage = () => {
   const [parkingSpots, setParkingSpots] = useState<Spot[]>([]); // Use Spot[] type for the array
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
-  const [center, setCenter] = useState({
+  const [center] = useState({
     lat: 37.7749, // Default latitude (e.g., San Francisco)
     lng: -122.4194, // Default longitude
   });
 
-  const [mapLoaded, setMapLoaded] = useState<boolean>(false); // New state to track if the map has loaded
+  const [mapLoaded] = useState<boolean>(false); // New state to track if the map has loaded
 
   // Fetch parking spots from the backend
   const fetchParkingSpots = async () => {
     setLoading(true);
     try {
       const response = await axios.get<Spot[]>("/api/parking-spots"); // Specify the type of response
-      setParkingSpots(response.data);
+      console.log("parking spots response", response);
+
+      // setParkingSpots(response.data);
+      setParkingSpots(mockParkingSpots);
     } catch (err) {
       setError("Failed to load parking spots.");
     } finally {
@@ -108,7 +155,10 @@ const DriverPage = () => {
                 position={{ lat: spot.latitude, lng: spot.longitude }}
                 icon={customIcon}
               >
-                <Popup>{spot.name}</Popup>
+                <Popup>
+                  <h2>{spot.name}</h2>
+                  <p>₹{spot.pricePerHour}/Hour</p>
+                </Popup>
               </Marker>
             ))}
           </MapContainer>
