@@ -106,11 +106,15 @@ const DriverPage = () => {
     try {
       await signOut(auth);
       alert("Signed out successfully!");
-      window.location.href = "/"; // Redirect to login page
+  
+      if (typeof window !== "undefined") {
+        window.location.href = "/"; // Redirect only in the browser
+      }
     } catch (error) {
       console.error("Error signing out:", error);
     }
   };
+  
 
   return (
     <div className="driver-page min-h-screen bg-gray-50">
