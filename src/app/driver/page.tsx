@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import L from "leaflet"; // Import L from leaflet
+import L from "leaflet";
 import axios from "axios";
 import { auth } from "../../../firebase";
 import { signOut } from "firebase/auth";
@@ -41,19 +41,21 @@ const DriverPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [customIcon, setCustomIcon] = useState<L.Icon | null>(null);
-  // const [mapLoaded, setMapLoaded] = useState(false);
 
   const router = useRouter();
   const center = { lat: 37.7749, lng: -122.4194 };
 
   useEffect(() => {
-    const icon = L.icon({
-      iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -32],
-    });
-    setCustomIcon(icon);
+    if (typeof window !== "undefined") {
+      // Only run this code in the browser
+      const icon = L.icon({
+        iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+      });
+      setCustomIcon(icon);
+    }
   }, []);
 
   const fetchParkingSpots = async () => {
@@ -109,7 +111,6 @@ const DriverPage = () => {
             center={center}
             zoom={12}
             style={{ width: "100%", height: "400px", borderRadius: "8px" }}
-            // whenCreated={() => setMapLoaded(true)}
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             {parkingSpots.map((spot) => (
