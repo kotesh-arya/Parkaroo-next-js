@@ -35,8 +35,8 @@ const Auth = () => {
         await signInWithEmailAndPassword(auth, email, password);
 
         // Check the user's role if needed during sign-in
-        toast.success("Signed in successfully!");
         router.push(role === "owner" ? "/owner" : "/driver"); // Redirect based on role
+        toast.success("Signed in successfully!");
       } else {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
