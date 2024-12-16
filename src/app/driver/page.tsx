@@ -11,10 +11,21 @@ import { toast } from "react-toastify";
 import "leaflet/dist/leaflet.css";
 
 // Dynamically import react-leaflet components
-const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then((mod) => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), { ssr: false });
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+);
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
+  ssr: false,
+});
 
 type Spot = {
   id: string;
@@ -30,7 +41,7 @@ const DriverPage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [customIcon, setCustomIcon] = useState<L.Icon | null>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
+  // const [mapLoaded, setMapLoaded] = useState(false);
 
   const router = useRouter();
   const center = { lat: 37.7749, lng: -122.4194 };
@@ -52,6 +63,7 @@ const DriverPage = () => {
       setParkingSpots(response.data);
     } catch (err) {
       setError("Failed to load parking spots.");
+      console.error(err);
     } finally {
       setLoading(false);
     }
