@@ -9,10 +9,21 @@ import { auth } from "../../../firebase";
 import { signOut } from "firebase/auth";
 
 // Dynamically load the MapContainer and related components to disable SSR
-const MapContainer = dynamic(() => import("react-leaflet").then(mod => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then(mod => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then(mod => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then(mod => mod.Popup), { ssr: false });
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+);
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
+  ssr: false,
+});
 
 type Spot = {
   id: string;
@@ -55,7 +66,7 @@ const DriverPage = () => {
   const fetchParkingSpots = async () => {
     setLoading(true);
     try {
-      const response = await axios.get<Spot[]>("/api/parking-spots");
+      await axios.get<Spot[]>("/api/parking-spots");
       setParkingSpots(mockParkingSpots); // Use mock data for now
     } catch (err) {
       setError("Failed to load parking spots.");
@@ -100,7 +111,9 @@ const DriverPage = () => {
           Nearby Parking Spots
         </h2>
 
-        {loading && <p className="text-lg text-gray-600">Loading parking spots...</p>}
+        {loading && (
+          <p className="text-lg text-gray-600">Loading parking spots...</p>
+        )}
         {error && <p className="text-lg text-red-600">{error}</p>}
 
         {!loading && !error && (
@@ -113,7 +126,7 @@ const DriverPage = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            {parkingSpots.map(spot => (
+            {parkingSpots.map((spot) => (
               <Marker
                 key={spot.id}
                 position={{ lat: spot.latitude, lng: spot.longitude }}
