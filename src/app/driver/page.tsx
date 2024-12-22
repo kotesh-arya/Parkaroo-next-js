@@ -47,16 +47,18 @@ const DriverPage = () => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Only run this code in the browser
-      const icon = L.icon({
-        iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32],
+      import("leaflet").then((L) => {
+        const icon = L.icon({
+          iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -32],
+        });
+        setCustomIcon(icon);
       });
-      setCustomIcon(icon);
     }
   }, []);
+  
 
   const fetchParkingSpots = async () => {
     setLoading(true);
