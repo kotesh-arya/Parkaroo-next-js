@@ -4,6 +4,7 @@ import { auth } from "../../../firebase";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { DeleteConfirmModal } from "../components/DeleteConfirmModal";
+import { toast } from "react-toastify";
 
 interface Spot {
   id: string;
@@ -162,7 +163,8 @@ const OwnerDashboard = () => {
         userEmail: null,
         userUID: null,
       });
-      router.push("/auth"); // Redirect to owner page
+      router.push("/auth"); // Redirect to auth page
+      toast.success("Signed out successfully!");
     } catch (error) {
       console.error("Error logging out:", error);
     }

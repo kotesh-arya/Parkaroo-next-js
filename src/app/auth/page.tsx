@@ -18,6 +18,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleSignInLoading, setGoogleSignInLoading] = useState(false);
+  const [passwordHidden, setPasswordHidden] = useState(false);
 
   const router = useRouter();
 
@@ -61,7 +62,6 @@ const Auth = () => {
     setGoogleSignInLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
-
       // Handle Google Sign-In role assignment (optional)
       toast.success("Signed in with Google successfully!");
       router.push("/owner");
@@ -72,7 +72,9 @@ const Auth = () => {
       setGoogleSignInLoading(false);
     }
   };
-
+  const togglePasswordVisibility = () => {
+    setPasswordHidden(!passwordHidden);
+  };
   return (
     <div className="flex min-h-full flex-col md:flex-row justify-center px-6 py-12 lg:px-8 text-text ">
       {/* ! logo image container div */}
@@ -113,17 +115,23 @@ const Auth = () => {
             <label htmlFor="password" className="block text-sm/6 font-medium ">
               Password
             </label>
-            <div className="mt-2">
+            <div className="mt-2 relative">
               <input
-                type="password"
+                type={`${passwordHidden ? "password" : "text"}`}
                 name="password"
                 id="password"
                 autoComplete="current-password"
                 required
-                className="block w-full rounded-md bg-white px-3 py-1.5 text-base  outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                className="block absolute w-full rounded-md bg-white px-3 py-1.5 text-base  outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <p
+                onClick={togglePasswordVisibility}
+                className="absolute mt-2 right-3 cursor-pointer"
+              >
+                {passwordHidden ? "Show" : "Hide"}
+              </p>
             </div>
           </div>
 
