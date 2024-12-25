@@ -76,9 +76,9 @@ const Auth = () => {
     setPasswordHidden(!passwordHidden);
   };
   return (
-    <div className="flex min-h-full flex-col md:flex-row justify-center px-6 py-12 lg:px-8 text-text ">
-      {/* ! logo image container div */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm md:max-w-[600px] flex flex-col justify-center  ">
+    <div className="relative isolate flex min-h-full flex-col md:flex-row justify-center px-6 py-12 lg:px-8 text-text">
+      {/* ! logo image container div commented as of now */}
+      {/* <div className="sm:mx-auto sm:w-full sm:max-w-sm md:max-w-[600px] flex flex-col justify-center  ">
         <Image
           className="mx-auto"
           src="/Parking.gif"
@@ -87,7 +87,14 @@ const Auth = () => {
           height={500}
           priority
         />
-      </div>
+      </div> */}
+
+      {/* <div
+        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-10"
+        aria-hidden="true"
+      >
+        <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#2C3E50] to-[#3498DB] opacity-30 sm:left-[calc(50%-10rem)] sm:w-[72.1875rem]"></div>
+      </div> */}
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm shadow-lg p-4 border-2 border-solid rounded-xl ">
         <h2 className="mt-0 text-center text-2xl/9 font-bold tracking-tight ">
           {isLogin ? "Sign in to your account" : "Create your account"}
@@ -213,6 +220,13 @@ const Auth = () => {
             {googleSignInLoading ? "Signing In..." : "Sign In with Google"}
           </button>
         </div>
+      </div>
+
+      <div
+        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-10 "
+        aria-hidden="true"
+      >
+        <div className="relative right-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#2C3E50] to-[#3498DB] opacity-30 sm:left-[calc(50%-0rem)] sm:w-[72.1875rem]"></div>
       </div>
     </div>
   );
