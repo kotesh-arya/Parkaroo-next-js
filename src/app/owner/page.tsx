@@ -65,8 +65,6 @@ const OwnerDashboard = () => {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-      console.log(currentUser, "currentUser here");
-
       if (currentUser) {
         let userName = currentUser.displayName;
         if (!userName && currentUser.email) {
@@ -102,7 +100,6 @@ const OwnerDashboard = () => {
       setLoadingMessage("");
     }
   }
-  console.log(user, "user");
 
   useEffect(() => {
     if (user.userUID) {
@@ -216,7 +213,7 @@ const OwnerDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-6">
+    <div className="min-h-screen text-white relative">
       {loading && loadingMessage && <LoadingModal message={loadingMessage} />}
 
       <DeleteConfirmModal
@@ -226,37 +223,38 @@ const OwnerDashboard = () => {
       />
 
       {/* The rest of your UI remains unchanged */}
+      <div className="bg-primary text-white p-6 shadow-lg fixed w-screen z-10  top-0">
+        <div className="container mx-auto flex justify-between items-center">
+          <h1 className="text-3xl font-semibold">Owner: {user.userName} </h1>
+          <button
+            onClick={handleLogout}
+            className="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-md text-white font-semibold transition duration-300"
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
 
-      <div className="relative max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <button
+      <div className="relative max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-24 ">
+        {/* <button
           onClick={handleLogout}
           className="absolute top-4 right-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
         >
           Logout
-        </button>
+        </button> */}
 
-        <h1 className="text-3xl font-bold text-center text-indigo-800 mb-6">
+        <h1 className="text-3xl font-bold text-center text-text mb-6">
           Your Parking Spots
         </h1>
 
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6 max-w-md mx-auto">
+        {/*  User information card with edit information feature to be implemented aftr asking FEEDBACK for the position of this card */}
+        {/* <div className="bg-white p-6 rounded-lg shadow-md mb-6 max-w-md mx-auto">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
             User Information
           </h2>
           <div className="space-y-4">
+            <div className="flex items-center gap-4"></div>
             <div className="flex items-center gap-4">
-              {/* <span className="material-icons text-gray-500">badge</span> */}
-              {/* <p className="text-gray-700">
-                <span className="font-semibold">Name:</span>{" "}
-                {user.userName || (
-                  <span className="text-red-500 font-medium">
-                    Not logged in
-                  </span>
-                )}
-              </p> */}
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="material-icons text-gray-500">email</span>
               <p className="text-gray-700">
                 <span className="font-semibold">Email:</span>{" "}
                 {user.userEmail || (
@@ -268,42 +266,46 @@ const OwnerDashboard = () => {
             </div>
           </div>
           <div className="mt-4">
-            <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+            <button className="bg-secondary text-white px-4 py-2 rounded-lg  transition">
               Edit Information
             </button>
           </div>
-        </div>
+        </div> */}
 
-        <button
-          onClick={() => setShowModal(true)}
-          className="mb-4 px-6 py-2 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700"
-        >
-          Add New Parking Spot
-        </button>
+        <div className="flex ">
+          <button
+            onClick={() => setShowModal(true)}
+            className="mb-4 mx-auto px-6 py-2 bg-secondary text-white font-bold rounded-lg "
+          >
+            Add New Parking Spot
+          </button>
+        </div>
 
         {loading ? (
           <div className="flex justify-center items-center">
             <p className="text-gray-600">Loading...</p>
           </div>
         ) : spots.length ? (
-          spots.map((spot) => (
-            <div
-              key={spot.id}
-              className="spot bg-white p-4 mb-4 shadow-md rounded-lg text-black"
-            >
-              <h3 className="text-xl font-semibold">{spot.name}</h3>
-              <p>
-                Location: {spot.latitude}, {spot.longitude}
-              </p>
-              <p>Price: ${spot.pricePerHour}/hour</p>
-              <button
-                onClick={() => handleShowDeleteModal(spot.id)}
-                className="delete-button px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700"
+          <div className="flex flex-wrap justify-evenly  ">
+            {spots.map((spot) => (
+              <div
+                key={spot.id}
+                className="spot bg-white p-4 mb-4 shadow-md rounded-lg text-black "
               >
-                Delete
-              </button>
-            </div>
-          ))
+                <h3 className="text-xl font-semibold">{spot.name}</h3>
+                <p>
+                  Location: {spot.latitude}, {spot.longitude}
+                </p>
+                <p>Price: ${spot.pricePerHour}/hour</p>
+                <button
+                  onClick={() => handleShowDeleteModal(spot.id)}
+                  className="delete-button px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
+          </div>
         ) : (
           <p className="text-gray-600 text-center">No parking spots found.</p>
         )}
@@ -394,7 +396,7 @@ const OwnerDashboard = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
+                  className="px-4 py-2 bg-secondary text-white rounded "
                 >
                   Submit
                 </button>

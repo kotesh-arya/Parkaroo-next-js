@@ -9,7 +9,6 @@ import {
 } from "firebase/auth";
 import { googleProvider, auth } from "../../../firebase"; // Import your firebase configuration
 import { toast } from "react-toastify";
-import Image from "next/image";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -18,7 +17,7 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleSignInLoading, setGoogleSignInLoading] = useState(false);
-  const [passwordHidden, setPasswordHidden] = useState(false);
+  const [passwordHidden, setPasswordHidden] = useState(true);
 
   const router = useRouter();
 
@@ -35,7 +34,7 @@ const Auth = () => {
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
 
-        // Check the user's role if needed during sign-in
+        // ! Check the user's role if needed during sign-in
         router.push(role === "owner" ? "/owner" : "/driver"); // Redirect based on role
         toast.success("Signed in successfully!");
       } else {
@@ -46,7 +45,7 @@ const Auth = () => {
         );
         const user = userCredential.user;
 
-        // Update the user profile with role
+        // ! Update the user profile with role
         await updateProfile(user, { displayName: role });
         toast.success("Sign up successful! Please log in.");
         setIsLogin(true);
@@ -62,7 +61,7 @@ const Auth = () => {
     setGoogleSignInLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
-      // Handle Google Sign-In role assignment (optional)
+      //  ! Handle Google Sign-In role assignment (optional)
       toast.success("Signed in with Google successfully!");
       router.push("/owner");
     } catch (error: any) {
@@ -89,12 +88,6 @@ const Auth = () => {
         />
       </div> */}
 
-      {/* <div
-        className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-10"
-        aria-hidden="true"
-      >
-        <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#2C3E50] to-[#3498DB] opacity-30 sm:left-[calc(50%-10rem)] sm:w-[72.1875rem]"></div>
-      </div> */}
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm shadow-lg p-4 border-2 border-solid rounded-xl ">
         <h2 className="mt-0 text-center text-2xl/9 font-bold tracking-tight ">
           {isLogin ? "Sign in to your account" : "Create your account"}
@@ -182,13 +175,17 @@ const Auth = () => {
               className="flex w-full justify-center rounded-md  px-3 py-1.5 text-sm/6 font-semibold bg-secondary text-white shadow-sm hover:bg-text  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               disabled={loading}
             >
-              {loading
-                ? isLogin
-                  ? "Signing In..."
-                  : "Signing Up..."
-                : isLogin
-                ? "Sign In"
-                : "Sign Up"}
+              {loading ? (
+                isLogin ? (
+                  <div className="loader border-t-2 border-white-600 rounded-full w-6 h-6 mx-auto animate-spin"></div>
+                ) : (
+                  <div className="loader border-t-2 border-white-600 rounded-full w-6 h-6 mx-auto animate-spin"></div>
+                )
+              ) : isLogin ? (
+                "Sign In"
+              ) : (
+                "Sign Up"
+              )}
             </button>
           </div>
         </form>
@@ -217,7 +214,11 @@ const Auth = () => {
             className="flex w-full justify-center rounded-md bg-secondary  px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
             disabled={googleSignInLoading}
           >
-            {googleSignInLoading ? "Signing In..." : "Sign In with Google"}
+            {googleSignInLoading ? (
+              <div className="loader border-t-2 border-white-600 rounded-full w-6 h-6 mx-auto animate-spin"></div>
+            ) : (
+              "Sign In with Google"
+            )}
           </button>
         </div>
       </div>
