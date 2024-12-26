@@ -35,7 +35,14 @@ type Spot = {
   longitude: number;
   pricePerHour: number;
   user: string;
+  booked: boolean;
 };
+
+interface UserDetails {
+  userName: string | null;
+  userEmail?: string | null;
+  userUID?: string | null;
+}
 
 const DriverPage = () => {
   const [parkingSpots, setParkingSpots] = useState<Spot[]>([]);
@@ -46,8 +53,14 @@ const DriverPage = () => {
   const [showSpotModal, setShowSpotModal] = useState(false);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
 
+  const [user, setUser] = useState<UserDetails>({
+    userName: null,
+    userEmail: null,
+    userUID: null,
+  });
   const router = useRouter();
   const center = { lat: 17.6868, lng: 83.2185 };
+  console.log("driver user", user);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -62,6 +75,23 @@ const DriverPage = () => {
         setCustomIcon(icon);
       });
     }
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      if (currentUser) {
+        let userName = currentUser.displayName;
+        if (!userName && currentUser.email) {
+          userName = currentUser.email.split("@")[0];
+        }
+        setUser({
+          userName,
+          userEmail: currentUser.email,
+          userUID: currentUser.uid,
+        });
+      } else {
+        setUser({ userName: null, userEmail: null });
+      }
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const fetchParkingSpots = async () => {
@@ -175,6 +205,7 @@ const DriverPage = () => {
             show={showSpotModal}
             onClose={handleClose}
             spot={selectedSpot}
+            driver={user}
           />
         )}
       </main>

@@ -9,9 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@firebase/firestore-types": "^3.0.3",
     "@react-google-maps/api": "^2.20.3",
     "axios": "^1.7.8",
-    "firebase": "^11.0.2",
+    "firebase": "^11.1.0",
     "firebase-admin": "^13.0.1",
     "leaflet": "^1.9.4",
     "next": "15.0.3",

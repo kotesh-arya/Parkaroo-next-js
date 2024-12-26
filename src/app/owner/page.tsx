@@ -283,7 +283,7 @@ const OwnerDashboard = () => {
 
         {loading ? (
           <div className="flex justify-center items-center">
-            <p className="text-gray-600">Loading...</p>
+            <p className="text-gray-600"></p>
           </div>
         ) : spots.length ? (
           <div className="flex flex-wrap justify-evenly  ">
