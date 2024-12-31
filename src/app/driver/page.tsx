@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 import "leaflet/dist/leaflet.css";
 import { SpotDetailsModal } from "../components/SpotDetailsModal";
 
-// Dynamically import react-leaflet components
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
   { ssr: false }
@@ -58,6 +57,10 @@ const DriverPage = () => {
     userEmail: null,
     userUID: null,
   });
+
+  const [minPrice, setMinPrice] = useState<number | null>(null);
+  const [maxPrice, setMaxPrice] = useState<number | null>(null);
+
   const router = useRouter();
   const center = { lat: 17.6868, lng: 83.2185 };
 
@@ -74,6 +77,7 @@ const DriverPage = () => {
         setCustomIcon(icon);
       });
     }
+
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
         let userName = currentUser.displayName;
@@ -93,22 +97,23 @@ const DriverPage = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    fetchParkingSpots();
+  }, [minPrice, maxPrice]);
+
   const fetchParkingSpots = async () => {
-    setLoading(true);
     try {
-      const response = await axios.get<Spot[]>("/api/parking-spots");
+      setLoading(true);
+      const response = await axios.get("/api/parking-spots", {
+        params: { minPrice, maxPrice },
+      });
       setParkingSpots(response.data);
-    } catch (err) {
-      setError("Failed to load parking spots.");
-      console.error(err);
-    } finally {
+      setLoading(false);
+    } catch (error) {
+      setError("Failed to fetch parking spots. Please try again.");
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchParkingSpots();
-  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -122,13 +127,27 @@ const DriverPage = () => {
 
   const handleShow = (spot: Spot) => {
     setSelectedSpot(spot);
-    setShowSpotModal(!showSpotModal);
+    setShowSpotModal(true);
   };
 
   const handleClose = () => {
     setShowSpotModal(false);
     setSelectedSpot(null);
   };
+
+  const bookParkingSpot = async (spotId: string) => {
+    try {
+      await axios.post(`/api/book-spot/${spotId}`, {
+        userId: user.userUID,
+      });
+      toast.success("Parking spot booked successfully!");
+    } catch (err) {
+      toast.error("Failed to book the parking spot. Please try again.");
+      console.error(err);
+    }
+  };
+  console.log("no of parking spots", parkingSpots.length);
+
   return (
     <div className="driver-page min-h-screen bg-gray-50">
       <header className="bg-primary text-white p-6 shadow-lg">
@@ -148,6 +167,33 @@ const DriverPage = () => {
           Nearby Parking Spots
         </h2>
 
+        <div className="mb-4 flex gap-4">
+          <input
+            type="number"
+            placeholder="Min Price"
+            className="p-2 border rounded"
+            value={minPrice || ""}
+            onChange={(e) =>
+              setMinPrice(e.target.value ? parseInt(e.target.value) : null)
+            }
+          />
+          <input
+            type="number"
+            placeholder="Max Price"
+            className="p-2 border rounded"
+            value={maxPrice || ""}
+            onChange={(e) =>
+              setMaxPrice(e.target.value ? parseInt(e.target.value) : null)
+            }
+          />
+          <button
+            onClick={fetchParkingSpots}
+            className="px-4 py-2 bg-blue-500 text-white rounded shadow"
+          >
+            Filter
+          </button>
+        </div>
+
         {loading && <p>Loading parking spots...</p>}
         {error && <p className="text-red-600">{error}</p>}
         {!loading && !error && customIcon && (
@@ -166,39 +212,40 @@ const DriverPage = () => {
               <Marker
                 key={spot.id}
                 position={{ lat: spot.latitude, lng: spot.longitude }}
-                icon={customIcon} // Use a custom-designed marker icon
+                icon={customIcon}
               >
-                <Popup className="">
-                  {/* <div className=""> */}
-                  {/* Parking Spot Name */}
+                <Popup>
                   <h2 className="text-2xl font-bold text-gray-800">
                     {spot.name}
                   </h2>
-
-                  {/* Price Per Hour */}
                   <p className="text-lg text-gray-600">
                     <span className="font-semibold text-gray-800">
                       Price per Hour:
                     </span>{" "}
                     ₹{spot.pricePerHour}
                   </p>
-
-                  {/* View Details & Book Button */}
-                  <div className="flex justify-center">
-                    <button
-                      onClick={() => handleShow(spot)}
-                      className="px-8 py-3 bg-secondary text-white font-semibold rounded-lg shadow-md  focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out"
+                  <p className="text-lg">
+                    <span
+                      className={`font-semibold ${
+                        spot.booked ? "text-red-600" : "text-green-600"
+                      }`}
                     >
-                      View Details & Book
+                      {spot.booked ? "Booked" : "Available"}
+                    </span>
+                  </p>
+                  {!spot.booked && (
+                    <button
+                      onClick={() => bookParkingSpot(spot.id)}
+                      className="px-8 py-3 bg-secondary text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out"
+                    >
+                      Book Spot
                     </button>
-                  </div>
-                  {/* </div> */}
+                  )}
                 </Popup>
               </Marker>
             ))}
           </MapContainer>
         )}
-        {/* Uncomment this once the spot details modal is showing up */}
         {selectedSpot && (
           <SpotDetailsModal
             show={showSpotModal}

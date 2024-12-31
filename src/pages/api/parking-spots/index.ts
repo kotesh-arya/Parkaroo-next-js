@@ -22,14 +22,18 @@ const getParkingSpots = async (userUID: string) => {
   }
 };
 
-// Fetch all parking spots for a driver
-// TODO: Instead of showing all parking spots, only show nearby spots within 1KM range(will be modified later)
-const getAllParkingSpots = async () => {
+// Fetch all parking spots for a driver with an optional price filter
+const getAllParkingSpots = async (maxPrice?: number) => {
   try {
-    const q = query(
-      collection(db, 'parking-spots'),
-
-    );
+    let q;
+    if (maxPrice !== undefined) {
+      q = query(
+        collection(db, 'parking-spots'),
+        where('pricePerHour', '<=', maxPrice) // Filter by price
+      );
+    } else {
+      q = query(collection(db, 'parking-spots'));
+    }
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -62,6 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === "GET") {
     const ownerId = req.query.userUID;
+    const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined;
 
     if (typeof ownerId === "string") {
       try {
@@ -72,7 +77,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     } else {
       try {
-        const spots = await getAllParkingSpots();
+        const spots = await getAllParkingSpots(maxPrice);
         res.status(200).json(spots);
       } catch (error: any) {
         res.status(500).json({ error: error.message || "Internal Server Error" });
