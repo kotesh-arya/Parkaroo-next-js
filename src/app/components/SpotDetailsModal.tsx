@@ -31,11 +31,9 @@ export const SpotDetailsModal: React.FC<CustomModalProps> = ({
   const [loading, setLoading] = useState(false); // For showing a loading state
   const [error, setError] = useState<string | null>(null); // For displaying errors
   const [success, setSuccess] = useState(false); // To show booking success
-  console.log("spot details", spot);
 
   if (!show) return null;
 
-  console.log("driver details inside the spot booking modal", driver);
   // Function to handle booking
   const handleBooking = async () => {
     if (!spot || !spot.id) return;

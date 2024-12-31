@@ -10,9 +10,9 @@ interface Spot {
   id: string;
   name?: string;
   location?: string;
-  latitude?: number;
-  longitude?: number;
-  pricePerHour?: number;
+  latitude?: string;
+  longitude?: string;
+  pricePerHour?: string;
 }
 
 interface UserDetails {
@@ -51,15 +51,19 @@ const OwnerDashboard = () => {
     userUID: null,
   });
   const [showModal, setShowModal] = useState<boolean>(false);
+
+  const [showEditSpotModal, setShowEditSpotModal] = useState<boolean>(false);
+
   const [loadingMessage, setLoadingMessage] = useState<string>("");
   const [isDeleteModalVisible, setDeleteModalVisible] =
     useState<boolean>(false);
   const [deleteSpotId, setDeleteSpotId] = useState<string | null>(null);
-
+  const [editingSpot, setEditingSpot] = useState<Spot | null>(null);
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<FormInputs>();
 
@@ -151,6 +155,65 @@ const OwnerDashboard = () => {
       setLoadingMessage("");
     }
   };
+  const handleUpdateSpot: SubmitHandler<FormInputs> = async (data) => {
+    setShowEditSpotModal(false);
+    setLoading(true);
+    setLoadingMessage("Updating spot...");
+
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("User not authenticated");
+      }
+
+      const token = await user.getIdToken();
+
+      // Assuming `currentSpotId` holds the ID of the spot being edited
+      if (!editingSpot?.id) {
+        throw new Error("No parking spot ID provided");
+      }
+
+      const res = await fetch(`/api/parking-spots/${editingSpot?.id}`, {
+        method: "PUT", // Change to PUT for updating
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: data.name,
+          latitude: parseFloat(data.latitude),
+          longitude: parseFloat(data.longitude),
+          pricePerHour: parseFloat(data.pricePerHour),
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to update parking spot");
+      }
+
+      const updatedSpot = await res.json();
+
+      // Update the local spots state with the new data
+      setSpots((prev) =>
+        prev.map((spot) =>
+          spot.id === editingSpot?.id ? { ...spot, ...updatedSpot } : spot
+        )
+      );
+
+      // Optionally refetch all spots for accuracy
+      if (user) {
+        await fetchSpots(user.uid);
+      }
+
+      reset(); // Reset form state
+    } catch (error) {
+      console.error("Error updating parking spot:", error);
+    } finally {
+      setLoading(false);
+      setLoadingMessage("");
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -212,16 +275,23 @@ const OwnerDashboard = () => {
     setDeleteSpotId(null);
   };
 
+  useEffect(() => {
+    if (editingSpot) {
+      setValue("name", editingSpot.name ?? "");
+      setValue("latitude", editingSpot.latitude ?? "");
+      setValue("longitude", editingSpot.longitude ?? "");
+      setValue("pricePerHour", editingSpot.pricePerHour ?? "");
+    }
+  }, [editingSpot, setValue]);
+
   return (
     <div className="min-h-screen text-white relative">
       {loading && loadingMessage && <LoadingModal message={loadingMessage} />}
-
       <DeleteConfirmModal
         isVisible={isDeleteModalVisible}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
       />
-
       {/* The rest of your UI remains unchanged */}
       <div className="bg-primary text-white p-6 shadow-lg fixed w-screen z-10  top-0">
         <div className="container mx-auto flex justify-between items-center">
@@ -234,7 +304,6 @@ const OwnerDashboard = () => {
           </button>
         </div>
       </div>
-
       <div className="relative max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-24 ">
         {/* <button
           onClick={handleLogout}
@@ -274,7 +343,10 @@ const OwnerDashboard = () => {
 
         <div className="flex ">
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              reset();
+              setShowModal(true);
+            }}
             className="mb-4 mx-auto px-6 py-2 bg-secondary text-white font-bold rounded-lg "
           >
             Add New Parking Spot
@@ -297,19 +369,133 @@ const OwnerDashboard = () => {
                   Location: {spot.latitude}, {spot.longitude}
                 </p>
                 <p>Price: ${spot.pricePerHour}/hour</p>
-                <button
-                  onClick={() => handleShowDeleteModal(spot.id)}
-                  className="delete-button px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700"
-                >
-                  Delete
-                </button>
+                <div className="flex justify-between">
+                  <button
+                    onClick={() => {
+                      setEditingSpot({ ...spot });
+                      setShowEditSpotModal(true);
+                    }}
+                    className="delete-button px-4 py-2 bg-secondary text-white font-semibold rounded hover:bg-red-700"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleShowDeleteModal(spot.id)}
+                    className="delete-button px-4 py-2 bg-red-600 text-white font-semibold rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         ) : (
           <p className="text-gray-600 text-center">No parking spots found.</p>
         )}
-      </div>
+      </div>{" "}
+      {showEditSpotModal && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg w-96">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+              Edit Parking Spot
+            </h2>
+            <form
+              onSubmit={handleSubmit(handleUpdateSpot)}
+              className="space-y-4"
+            >
+              <div>
+                <input
+                  type="text"
+                  {...register("name", { required: "Spot name is required" })}
+                  placeholder="Spot Name"
+                  className="w-full p-2 border rounded text-black"
+                  defaultValue={editingSpot?.name}
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-sm">{errors.name.message}</p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  defaultValue={editingSpot?.latitude}
+                  {...register("latitude", {
+                    required: "Latitude is required",
+                    pattern: {
+                      value: /^-?\d+(\.\d+)?$/,
+                      message: "Enter a valid latitude",
+                    },
+                  })}
+                  placeholder="Latitude"
+                  className="w-full p-2 border rounded text-black"
+                />
+                {errors.latitude && (
+                  <p className="text-red-500 text-sm">
+                    {errors.latitude.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  defaultValue={editingSpot?.longitude}
+                  {...register("longitude", {
+                    required: "Longitude is required",
+                    pattern: {
+                      value: /^-?\d+(\.\d+)?$/,
+                      message: "Enter a valid longitude",
+                    },
+                  })}
+                  placeholder="Longitude"
+                  className="w-full p-2 border rounded text-black"
+                />
+                {errors.longitude && (
+                  <p className="text-red-500 text-sm">
+                    {errors.longitude.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  defaultValue={editingSpot?.pricePerHour}
+                  {...register("pricePerHour", {
+                    required: "Price per hour is required",
+                    pattern: {
+                      value: /^\d+(\.\d{1,2})?$/,
+                      message: "Enter a valid price",
+                    },
+                  })}
+                  placeholder="Price per Hour"
+                  className="w-full p-2 border rounded text-black"
+                />
+                {errors.pricePerHour && (
+                  <p className="text-red-500 text-sm">
+                    {errors.pricePerHour.message}
+                  </p>
+                )}
+              </div>
+              <div className="flex justify-end space-x-4 mt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditSpotModal(false);
+                  }}
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-secondary text-white rounded "
+                >
+                  Update
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       {/* Add New Parking Spot Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">

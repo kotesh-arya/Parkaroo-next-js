@@ -60,7 +60,6 @@ const DriverPage = () => {
   });
   const router = useRouter();
   const center = { lat: 17.6868, lng: 83.2185 };
-  console.log("driver user", user);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
