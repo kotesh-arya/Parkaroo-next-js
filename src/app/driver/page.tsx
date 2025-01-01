@@ -57,7 +57,7 @@ const DriverPage = () => {
     userEmail: null,
     userUID: null,
   });
-
+  const [bookingLoading, setBookingLoading] = useState(false);
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
 
@@ -97,9 +97,7 @@ const DriverPage = () => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    fetchParkingSpots();
-  }, [minPrice, maxPrice]);
+  // useEffect(() => {}, [minPrice, maxPrice]);
 
   const fetchParkingSpots = async () => {
     try {
@@ -135,19 +133,35 @@ const DriverPage = () => {
     setSelectedSpot(null);
   };
 
+  console.log(user.userUID, "driver Id");
+
   const bookParkingSpot = async (spotId: string) => {
+    setBookingLoading(true);
     try {
-      await axios.post(`/api/book-spot/${spotId}`, {
-        userId: user.userUID,
+      await axios.post(`/api/book-spot`, {
+        parkingSpotId: spotId,
+        driverId: user.userUID,
       });
       toast.success("Parking spot booked successfully!");
+      fetchParkingSpots();
     } catch (err) {
+      setBookingLoading(false);
       toast.error("Failed to book the parking spot. Please try again.");
       console.error(err);
+    } finally {
+      setBookingLoading(false);
     }
   };
-  console.log("no of parking spots", parkingSpots.length);
+  // console.log("no of parking spots", parkingSpots.length);
+  useEffect(() => {
+    let timerId = setTimeout(() => {
+      fetchParkingSpots();
+    }, 1000);
 
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [minPrice, maxPrice]);
   return (
     <div className="driver-page min-h-screen bg-gray-50">
       <header className="bg-primary text-white p-6 shadow-lg">
@@ -186,12 +200,12 @@ const DriverPage = () => {
               setMaxPrice(e.target.value ? parseInt(e.target.value) : null)
             }
           />
-          <button
+          {/* <button
             onClick={fetchParkingSpots}
             className="px-4 py-2 bg-blue-500 text-white rounded shadow"
           >
             Filter
-          </button>
+          </button> */}
         </div>
 
         {loading && <p>Loading parking spots...</p>}
@@ -233,14 +247,20 @@ const DriverPage = () => {
                       {spot.booked ? "Booked" : "Available"}
                     </span>
                   </p>
-                  {!spot.booked && (
-                    <button
-                      onClick={() => bookParkingSpot(spot.id)}
-                      className="px-8 py-3 bg-secondary text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out"
-                    >
-                      Book Spot
-                    </button>
-                  )}
+                  <div className="flex justify-center">
+                    {!spot.booked && (
+                      <button
+                        onClick={() => bookParkingSpot(spot.id)}
+                        className="px-8 py-3 bg-secondary text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out"
+                      >
+                        {bookingLoading ? (
+                          <div className="loader border-t-2 border-white-600 rounded-full w-5 h-5 mx-auto animate-spin"></div>
+                        ) : (
+                          "Book spot"
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </Popup>
               </Marker>
             ))}

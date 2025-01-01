@@ -14,11 +14,14 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    console.log("from spot booking controller function");
+
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
     const { parkingSpotId, driverId } = req.body as BookSpotRequestBody;
+    console.log(parkingSpotId, driverId);
 
     if (!parkingSpotId || !driverId) {
         return res.status(400).json({ message: 'Missing required fields' });
@@ -30,6 +33,8 @@ export default async function handler(
         const spotDoc = await getDoc(parkingSpotRef);
 
         if (!spotDoc.exists()) {
+            console.log("No such parking spot");
+
             return res.status(404).json({ error: "Parking spot not found" });
         }
 
