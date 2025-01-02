@@ -13,6 +13,7 @@ interface Spot {
   latitude?: string;
   longitude?: string;
   pricePerHour?: string;
+  booked: boolean;
 }
 
 interface UserDetails {
@@ -358,18 +359,25 @@ const OwnerDashboard = () => {
             <p className="text-gray-600"></p>
           </div>
         ) : spots.length ? (
-          <div className="flex flex-wrap justify-evenly  ">
+          <div className="flex flex-wrap justify-evenly">
             {spots.map((spot) => (
               <div
                 key={spot.id}
-                className="spot bg-white p-4 mb-4 shadow-md rounded-lg text-black "
+                className="spot bg-white p-4 mb-4 shadow-md rounded-lg text-black"
               >
-                <h3 className="text-xl font-semibold">{spot.name}</h3>
+                <h3 className="text-xl font-semibold my-3">
+                  {spot.name}{" "}
+                  {spot.booked && (
+                    <span className="text-red-600 font-medium text-sm ml-2 border-2 border-red-400 p-1 rounded-md bg-red-200">
+                      Booked
+                    </span>
+                  )}
+                </h3>
                 <p>
                   Location: {spot.latitude}, {spot.longitude}
                 </p>
                 <p>Price: ${spot.pricePerHour}/hour</p>
-                <div className="flex justify-between">
+                <div className="flex justify-between my-3">
                   <button
                     onClick={() => {
                       setEditingSpot({ ...spot });
