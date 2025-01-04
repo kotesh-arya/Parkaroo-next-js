@@ -61,6 +61,9 @@ const DriverPage = () => {
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
 
+  const [startDateTime, setStartDateTime] = useState<string>("");
+  const [endDateTime, setEndDateTime] = useState<string>("");
+
   const router = useRouter();
   const center = { lat: 17.6868, lng: 83.2185 };
 
@@ -97,8 +100,6 @@ const DriverPage = () => {
     return () => unsubscribe();
   }, []);
 
-  // useEffect(() => {}, [minPrice, maxPrice]);
-
   const fetchParkingSpots = async () => {
     try {
       setLoading(true);
@@ -133,14 +134,19 @@ const DriverPage = () => {
     setSelectedSpot(null);
   };
 
-  console.log(user.userUID, "driver Id");
-
   const bookParkingSpot = async (spotId: string) => {
+    if (!startDateTime || !endDateTime) {
+      toast.error("Please select start and end date & time before booking.");
+      return;
+    }
+
     setBookingLoading(true);
     try {
       await axios.post(`/api/book-spot`, {
         parkingSpotId: spotId,
         driverId: user.userUID,
+        startTime: startDateTime,
+        endTime: endDateTime,
       });
       toast.success("Parking spot booked successfully!");
       fetchParkingSpots();
@@ -152,7 +158,7 @@ const DriverPage = () => {
       setBookingLoading(false);
     }
   };
-  // console.log("no of parking spots", parkingSpots.length);
+
   useEffect(() => {
     let timerId = setTimeout(() => {
       fetchParkingSpots();
@@ -162,6 +168,7 @@ const DriverPage = () => {
       clearTimeout(timerId);
     };
   }, [minPrice, maxPrice]);
+
   return (
     <div className="driver-page min-h-screen bg-gray-50">
       <header className="bg-primary text-white p-6 shadow-lg">
@@ -200,12 +207,6 @@ const DriverPage = () => {
               setMaxPrice(e.target.value ? parseInt(e.target.value) : null)
             }
           />
-          {/* <button
-            onClick={fetchParkingSpots}
-            className="px-4 py-2 bg-blue-500 text-white rounded shadow"
-          >
-            Filter
-          </button> */}
         </div>
 
         {loading && <p>Loading parking spots...</p>}
@@ -247,32 +248,38 @@ const DriverPage = () => {
                       {spot.booked ? "Booked" : "Available"}
                     </span>
                   </p>
-                  <div className="flex justify-center">
-                    {!spot.booked && (
-                      <button
-                        onClick={() => bookParkingSpot(spot.id)}
-                        className="px-8 py-3 bg-secondary text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out"
-                      >
-                        {bookingLoading ? (
-                          <div className="loader border-t-2 border-white-600 rounded-full w-5 h-5 mx-auto animate-spin"></div>
-                        ) : (
-                          "Book spot"
-                        )}
-                      </button>
-                    )}
-                  </div>
+
+                  {/* Input fields inside the popup for start and end date & time */}
+                  {!spot.booked && (
+                    <>
+                      <div className="mt-4">
+                        <input
+                          type="datetime-local"
+                          className="p-2 border rounded mr-2"
+                          value={startDateTime}
+                          onChange={(e) => setStartDateTime(e.target.value)}
+                        />
+                        <input
+                          type="datetime-local"
+                          className="p-2 border rounded"
+                          value={endDateTime}
+                          onChange={(e) => setEndDateTime(e.target.value)}
+                        />
+                      </div>
+                      <div className="mt-4 flex justify-center">
+                        <button
+                          onClick={() => bookParkingSpot(spot.id)}
+                          className="bg-primary text-white px-6 py-2 rounded-md"
+                        >
+                          {bookingLoading ? "Booking..." : "Book"}
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </Popup>
               </Marker>
             ))}
           </MapContainer>
-        )}
-        {selectedSpot && (
-          <SpotDetailsModal
-            show={showSpotModal}
-            onClose={handleClose}
-            spot={selectedSpot}
-            driver={user}
-          />
         )}
       </main>
     </div>
