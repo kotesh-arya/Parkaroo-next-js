@@ -23,29 +23,38 @@ const Auth = () => {
 
   const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (!role) {
       toast.error("Please select a role: Owner or Driver");
       return;
     }
-
+  
     setLoading(true);
     try {
       if (isLogin) {
-        await signInWithEmailAndPassword(auth, email, password);
-
-        // ! Check the user's role if needed during sign-in
-        router.push(role === "owner" ? "/owner" : "/driver"); // Redirect based on role
+        // Log in flow
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+  
+        // Fetch the user's role from the profile or database
+        const userRole = user.displayName; // Assuming role is stored in `displayName`
+        
+        if (userRole !== role) {
+          toast.error(
+            `Access Denied: You are registered as a ${userRole}, but selected ${role}.`
+          );
+          return;
+        }
+  
+        // Redirect based on role
+        router.push(role === "owner" ? "/owner" : "/driver");
         toast.success("Signed in successfully!");
       } else {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+        // Sign-up flow
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-
-        // ! Update the user profile with role
+  
+        // Update the user profile with the selected role
         await updateProfile(user, { displayName: role });
         toast.success("Sign up successful! Please log in.");
         setIsLogin(true);
@@ -56,6 +65,7 @@ const Auth = () => {
       setLoading(false);
     }
   };
+  
 
   const handleGoogleSignIn = async () => {
     setGoogleSignInLoading(true);
