@@ -20,6 +20,12 @@ type CustomModalProps = {
   onClose: () => void; // Function to close the modal
   spot: Spot; // The selected parking spot, which can be null if no spot is selected
   driver: UserDetails;
+  onBook: () => void;
+  bookingLoading: boolean;
+  startDateTime: string;
+  setStartDateTime: string;
+  endDateTime: string;
+  setEndDateTime: string;
 };
 
 export const SpotDetailsModal: React.FC<CustomModalProps> = ({
@@ -27,6 +33,12 @@ export const SpotDetailsModal: React.FC<CustomModalProps> = ({
   onClose,
   spot,
   driver,
+  onBook,
+  bookingLoading,
+  startDateTime,
+  setStartDateTime,
+  endDateTime,
+  setEndDateTime,
 }) => {
   const [loading, setLoading] = useState(false); // For showing a loading state
   const [error, setError] = useState<string | null>(null); // For displaying errors
@@ -35,32 +47,32 @@ export const SpotDetailsModal: React.FC<CustomModalProps> = ({
   if (!show) return null;
 
   // Function to handle booking
-  const handleBooking = async () => {
-    if (!spot || !spot.id) return;
+  // const handleBooking = async () => {
+  //   if (!spot || !spot.id) return;
 
-    setLoading(true);
-    setError(null);
+  //   setLoading(true);
+  //   setError(null);
 
-    try {
-      const driverId = driver.userUID; // Replace with the actual driver ID (e.g., from auth context)
+  //   try {
+  //     const driverId = driver.userUID; // Replace with the actual driver ID (e.g., from auth context)
 
-      const response = await axios.post("/api/book-spot", {
-        parkingSpotId: spot.id,
-        driverId,
-      });
+  //     const response = await axios.post("/api/book-spot", {
+  //       parkingSpotId: spot.id,
+  //       driverId,
+  //     });
 
-      if (response.status === 200) {
-        setSuccess(true);
-      } else {
-        setError("Failed to book the parking spot. Please try again.");
-      }
-    } catch (err) {
-      console.error(err);
-      setError("An error occurred while booking. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     if (response.status === 200) {
+  //       setSuccess(true);
+  //     } else {
+  //       setError("Failed to book the parking spot. Please try again.");
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     setError("An error occurred while booking. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-100 right-100 bottom-0">
@@ -101,7 +113,7 @@ export const SpotDetailsModal: React.FC<CustomModalProps> = ({
               className={`bg-secondary text-white px-4 py-2 rounded mr-2 ${
                 loading ? "opacity-50 cursor-not-allowed" : ""
               }`}
-              onClick={handleBooking}
+              onClick={onBook}
               disabled={loading}
             >
               {loading ? "Booking..." : "Book Now"}

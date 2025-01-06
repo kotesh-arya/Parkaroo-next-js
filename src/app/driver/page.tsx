@@ -60,6 +60,7 @@ const DriverPage = () => {
   const [bookingLoading, setBookingLoading] = useState(false);
   const [minPrice, setMinPrice] = useState<number | null>(null);
   const [maxPrice, setMaxPrice] = useState<number | null>(null);
+  const [availabilityFilter, setAvailabilityFilter] = useState<string>("all"); // New filter
 
   const [startDateTime, setStartDateTime] = useState<string>("");
   const [endDateTime, setEndDateTime] = useState<string>("");
@@ -104,7 +105,7 @@ const DriverPage = () => {
     try {
       setLoading(true);
       const response = await axios.get("/api/parking-spots", {
-        params: { minPrice, maxPrice },
+        params: { minPrice, maxPrice, availability: availabilityFilter },
       });
       setParkingSpots(response.data);
       setLoading(false);
@@ -151,7 +152,6 @@ const DriverPage = () => {
       toast.success("Parking spot booked successfully!");
       fetchParkingSpots();
     } catch (err) {
-      setBookingLoading(false);
       toast.error("Failed to book the parking spot. Please try again.");
       console.error(err);
     } finally {
@@ -160,14 +160,8 @@ const DriverPage = () => {
   };
 
   useEffect(() => {
-    let timerId = setTimeout(() => {
-      fetchParkingSpots();
-    }, 1000);
-
-    return () => {
-      clearTimeout(timerId);
-    };
-  }, [minPrice, maxPrice]);
+    fetchParkingSpots();
+  }, [minPrice, maxPrice, availabilityFilter]);
 
   return (
     <div className="driver-page min-h-screen bg-gray-50">
@@ -207,6 +201,15 @@ const DriverPage = () => {
               setMaxPrice(e.target.value ? parseInt(e.target.value) : null)
             }
           />
+          <select
+            className="p-2 border rounded"
+            value={availabilityFilter}
+            onChange={(e) => setAvailabilityFilter(e.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="available">Available</option>
+            <option value="booked">Booked</option>
+          </select>
         </div>
 
         {loading && <p>Loading parking spots...</p>}
@@ -228,58 +231,33 @@ const DriverPage = () => {
                 key={spot.id}
                 position={{ lat: spot.latitude, lng: spot.longitude }}
                 icon={customIcon}
+                eventHandlers={{
+                  click: () => handleShow(spot),
+                }}
               >
                 <Popup>
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    {spot.name}
-                  </h2>
-                  <p className="text-lg text-gray-600">
-                    <span className="font-semibold text-gray-800">
-                      Price per Hour:
-                    </span>{" "}
-                    ₹{spot.pricePerHour}
+                  <p>{spot.name}</p>
+                  <p>
+                    ₹{spot.pricePerHour} per hour{" "}
+                    {spot.booked ? "(Booked)" : "(Available)"}
                   </p>
-                  <p className="text-lg">
-                    <span
-                      className={`font-semibold ${
-                        spot.booked ? "text-red-600" : "text-green-600"
-                      }`}
-                    >
-                      {spot.booked ? "Booked" : "Available"}
-                    </span>
-                  </p>
-
-                  {/* Input fields inside the popup for start and end date & time */}
-                  {!spot.booked && (
-                    <>
-                      <div className="mt-4">
-                        <input
-                          type="datetime-local"
-                          className="p-2 border rounded mr-2"
-                          value={startDateTime}
-                          onChange={(e) => setStartDateTime(e.target.value)}
-                        />
-                        <input
-                          type="datetime-local"
-                          className="p-2 border rounded"
-                          value={endDateTime}
-                          onChange={(e) => setEndDateTime(e.target.value)}
-                        />
-                      </div>
-                      <div className="mt-4 flex justify-center">
-                        <button
-                          onClick={() => bookParkingSpot(spot.id)}
-                          className="bg-primary text-white px-6 py-2 rounded-md"
-                        >
-                          {bookingLoading ? "Booking..." : "Book"}
-                        </button>
-                      </div>
-                    </>
-                  )}
                 </Popup>
               </Marker>
             ))}
           </MapContainer>
+        )}
+
+        {showSpotModal && selectedSpot && (
+          <SpotDetailsModal
+            spot={selectedSpot}
+            onClose={handleClose}
+            onBook={() => bookParkingSpot(selectedSpot.id)}
+            bookingLoading={bookingLoading}
+            startDateTime={startDateTime}
+            setStartDateTime={setStartDateTime}
+            endDateTime={endDateTime}
+            setEndDateTime={setEndDateTime}
+          />
         )}
       </main>
     </div>
