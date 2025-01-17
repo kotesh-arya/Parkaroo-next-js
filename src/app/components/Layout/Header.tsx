@@ -22,7 +22,7 @@ const Header = () => {
   const navLinks = [
     { id: "about", label: "About" },
     { id: "feature", label: "Feature" },
-    { id: "pricing", label: "Pricing" },
+    // { id: "pricing", label: "Pricing" },
     // { id: "testimoni", label: "Testimonial" },
   ];
 
@@ -40,7 +40,7 @@ const Header = () => {
               src="/Parkaroo-logo.png"
               alt="Parkaroo"
               width={80}
-              height={20}
+              height={50}
             />
           </div>
 

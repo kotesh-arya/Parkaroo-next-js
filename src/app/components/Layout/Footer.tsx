@@ -13,17 +13,17 @@ const Footer = () => {
             <strong className="font-medium">LaslesVPN</strong> is a private
             virtual network that has unique features and has high security.
           </p>
-          <div className="flex w-full mt-2 mb-8 -mx-2">
+          {/* <div className="flex w-full mt-2 mb-8 -mx-2">
             <div className="mx-2 bg-white-500 rounded-full items-center justify-center flex p-2 shadow-md">
-              {/* <Facebook className="h-6 w-6" /> */}
+              <Facebook className="h-6 w-6" />
             </div>
             <div className="mx-2 bg-white-500 rounded-full items-center justify-center flex p-2 shadow-md">
-              {/* <Twitter className="h-6 w-6" /> */}
+              <Twitter className="h-6 w-6" />
             </div>
             <div className="mx-2 bg-white-500 rounded-full items-center justify-center flex p-2 shadow-md">
-              {/* <Instagram className="h-6 w-6" /> */}
+              <Instagram className="h-6 w-6" />
             </div>
-          </div>
+          </div> */}
           <p className="text-gray-400">
             ©{new Date().getFullYear()} - LaslesVPN
           </p>
@@ -34,15 +34,15 @@ const Footer = () => {
             <li className="my-2 hover:text-orange-500 cursor-pointer transition-all">
               Download{" "}
             </li>
-            <li className="my-2 hover:text-orange-500 cursor-pointer transition-all">
+            {/* <li className="my-2 hover:text-orange-500 cursor-pointer transition-all">
               Pricing{" "}
-            </li>
+            </li> */}
             <li className="my-2 hover:text-orange-500 cursor-pointer transition-all">
               Locations{" "}
             </li>
-            <li className="my-2 hover:text-orange-500 cursor-pointer transition-all">
+            {/* <li className="my-2 hover:text-orange-500 cursor-pointer transition-all">
               Server{" "}
-            </li>
+            </li> */}
             <li className="my-2 hover:text-orange-500 cursor-pointer transition-all">
               Countries{" "}
             </li>
@@ -51,7 +51,7 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-        <div className="row-span-2 sm:col-span-2 sm:col-start-9 sm:col-end-11 flex flex-col">
+        {/* <div className="row-span-2 sm:col-span-2 sm:col-start-9 sm:col-end-11 flex flex-col">
           <p className="text-black-600 mb-4 font-medium text-lg">Engage</p>
           <ul className="text-black-500">
             <li className="my-2 hover:text-orange-500 cursor-pointer transition-all">
@@ -73,8 +73,8 @@ const Footer = () => {
               Terms of Service{" "}
             </li>
           </ul>
-        </div>
-        <div className="row-span-2 sm:col-span-2 sm:col-start-11 sm:col-end-13 flex flex-col">
+        </div> */}
+        {/* <div className="row-span-2 sm:col-span-2 sm:col-start-11 sm:col-end-13 flex flex-col">
           <p className="text-black-600 mb-4 font-medium text-lg">Earn Money</p>
           <ul className="text-black-500">
             <li className="my-2 hover:text-orange-500 cursor-pointer transition-all">
@@ -84,7 +84,7 @@ const Footer = () => {
               Become Partner{" "}
             </li>
           </ul>
-        </div>
+        </div> */}
       </div>
     </div>
   );

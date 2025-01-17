@@ -10,17 +10,17 @@ const Hero = ({
   listUser = [
     {
       name: "Users",
-      number: "390",
+      number: "69",
       icon: "/assets/Icon/heroicons_sm-user.svg",
     },
     {
       name: "Locations",
-      number: "20",
+      number: "69",
       icon: "/assets/Icon/gridicons_location.svg",
     },
     {
       name: "Server",
-      number: "50",
+      number: "69",
       icon: "/assets/Icon/bx_bxs-server.svg",
     },
   ],
@@ -44,9 +44,7 @@ const Hero = ({
               space deserves a purpose.
             </p>
             <ButtonPrimary>
-              <Link href="/auth">
-              Get Started
-              </Link>
+              <Link href="/auth">Get Started</Link>
             </ButtonPrimary>
           </div>
           <div className="flex w-full  ">
@@ -73,7 +71,7 @@ const Hero = ({
               variants={scrollAnimation}
             >
               <div className="flex mx-auto w-40 sm:w-auto">
-                <div className="flex items-center justify-center bg-orange-100 w-12 h-12 mr-6 rounded-full">
+                <div className="flex items-center justify-center bg-gray-100 w-12 h-12 mr-6 rounded-full">
                   <img src={listUsers.icon} className="h-6 w-6" />
                 </div>
                 <div className="flex flex-col">
