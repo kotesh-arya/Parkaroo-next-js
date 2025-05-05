@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Slider from "react-slick";
 import Image from "next/image";
-import * as Stars from "../public/assets/Icon/stars.svg";
-import * as ArrowBack from "../public/assets/Icon/eva_arrow-back-fill.svg";
-import * as ArrowNext from "../public/assets/Icon/eva_arrow-next-fill.svg";
+// import * as Stars from "../public/assets/Icon/stars.svg";
+// import * as ArrowBack from "../public/assets/Icon/eva_arrow-back-fill.svg";
+// import * as ArrowNext from "../public/assets/Icon/eva_arrow-next-fill.svg";
 import Link from "next/link";
 
 interface Testimoni {
@@ -45,7 +45,7 @@ const Testimoni: React.FC<TestimoniProps> = ({
     dots: true,
     customPaging: (i: number) => (
       <Link href={"/"}>
-        <span className="mx-2 rounded-full h-4 w-4 block cursor-pointer transition-all bg-gray-300"></span>
+        <span className="mx-2 rounded-full h-4 w-4 block cursor-pointer transition-all bg-gray-300">{i}</span>
       </Link>
     ),
     dotsClass: "slick-dots w-max absolute mt-20",

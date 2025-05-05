@@ -111,6 +111,8 @@ const DriverPage = () => {
       setLoading(false);
     } catch (error) {
       setError("Failed to fetch parking spots. Please try again.");
+      console.log("Failed to fetch parking spots:",error);
+      
       setLoading(false);
     }
   };

@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
+// import { useState } from "react";
+// import Link from "next/link";
+// import Image from "next/image";
 import Layout from "./components/Layout/Layout";
 import Hero from "./components/Hero";
 import Feature from "./components/Feature";
-import Pricing from "./components/Pricing";
+// import Pricing from "./components/Pricing";
 
 export default function Home() {
   // const [hamburgerVisibility, setHamburgerVisibility] = useState(false);

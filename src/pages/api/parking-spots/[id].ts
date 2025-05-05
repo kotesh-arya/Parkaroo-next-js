@@ -55,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
 
             const token = authHeader.split(" ")[1];
-            const decodedToken = await admin.auth().verifyIdToken(token);
+             await admin.auth().verifyIdToken(token);
 
             const { name, latitude, longitude, pricePerHour, ownerId } = req.body;
 

@@ -2,11 +2,11 @@ import React, { useMemo } from "react";
 import Image from "next/image";
 import ButtonPrimary from "./misc/ButtonPrimary";
 import ButtonOutline from "../components/misc/ButtonOutline";
-import Maps from "../public/assets/HugeGlobal.svg";
+// import Maps from "../public/assets/HugeGlobal.svg";
 import { motion } from "framer-motion";
 import getScrollAnimation from "../utils/getScrollAnimation";
 import ScrollAnimationWrapper from "./Layout/ScrollAnimationWrapper";
-import Testimoni from "./Testimonial";
+// import Testimoni from "./Testimonial";
 
 const Pricing = () => {
   const scrollAnimation = useMemo(() => getScrollAnimation(), []);
@@ -29,7 +29,7 @@ const Pricing = () => {
               variants={scrollAnimation}
               className="leading-normal w-10/12 sm:w-7/12 lg:w-6/12 mx-auto my-2 text-center"
             >
-              Let's choose the package that is best for you and explore it
+              Let&apos;s choose the package that is best for you and explore it
               happily and cheerfully.
             </motion.p>
           </ScrollAnimationWrapper>
@@ -207,7 +207,7 @@ const Pricing = () => {
                   <h5 className="text-black-600 text-xl sm:text-2xl lg:text-3xl leading-relaxed font-medium">
                     Subscribe Now for <br /> Get Special Features!
                   </h5>
-                  <p>Let's subscribe with us and find the fun.</p>
+                  <p>Let&apos;s subscribe with us and find the fun.</p>
                 </div>
                 <ButtonPrimary>Get Started</ButtonPrimary>
               </div>

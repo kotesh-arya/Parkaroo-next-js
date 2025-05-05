@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 
 type Spot = {
   id: string;
@@ -16,33 +16,33 @@ interface UserDetails {
 }
 
 type CustomModalProps = {
-  show: boolean; // Whether the modal is visible
+  show?: boolean; // Whether the modal is visible
   onClose: () => void; // Function to close the modal
   spot: Spot; // The selected parking spot, which can be null if no spot is selected
-  driver: UserDetails;
+  driver?: UserDetails;
   onBook: () => void;
   bookingLoading: boolean;
   startDateTime: string;
-  setStartDateTime: string;
+  setStartDateTime: React.Dispatch<React.SetStateAction<string>>;
   endDateTime: string;
-  setEndDateTime: string;
+  setEndDateTime: React.Dispatch<React.SetStateAction<string>>;
 };
 
 export const SpotDetailsModal: React.FC<CustomModalProps> = ({
   show,
   onClose,
   spot,
-  driver,
+  // driver,
   onBook,
-  bookingLoading,
-  startDateTime,
-  setStartDateTime,
-  endDateTime,
-  setEndDateTime,
+  // bookingLoading,
+  // startDateTime,
+  // setStartDateTime,
+  // endDateTime,
+  // setEndDateTime,
 }) => {
-  const [loading, setLoading] = useState(false); // For showing a loading state
-  const [error, setError] = useState<string | null>(null); // For displaying errors
-  const [success, setSuccess] = useState(false); // To show booking success
+  const [loading] = useState(false); // For showing a loading state
+  const [error] = useState<string | null>(null); // For displaying errors
+  const [success] = useState(false); // To show booking success
 
   if (!show) return null;
 
