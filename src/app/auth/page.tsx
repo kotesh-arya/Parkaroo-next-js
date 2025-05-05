@@ -63,7 +63,7 @@ const Auth = () => {
         const user = userCredential.user;
 
         // Update the user profile with the selected role
-        await updateProfile(user, { displayName: role, admin: "kotesh" });
+        await updateProfile(user, { displayName: role });
         toast.success("Sign up successful! Please log in.");
         setIsLogin(true);
       }
