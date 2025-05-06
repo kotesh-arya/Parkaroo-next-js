@@ -32,7 +32,7 @@ export default function Home() {
           <div className="flex lg:hidden">
             <button
               type="button"
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+              className="mt-3.5 -mr-2  inline-flex items-center justify-center rounded-md p-2.5 text-gray-700  "
               onClick={() => {
                 setHamburgerVisibility(!hamburgerVisibility);
               }}
@@ -84,13 +84,16 @@ export default function Home() {
         </nav>
         {/* <!-- Mobile menu, show/hide based on menu open state. --> */}
         <div
-          className={`lg:hidden ${hamburgerVisibility ? "none" : "hidden"}`}
+          className={`lg:hidden fixed inset-0 z-50 transition-transform duration-700 ease-in-out ${
+            hamburgerVisibility ? "translate-x-0" : "translate-x-full"
+          }`}
           role="dialog"
           aria-modal="true"
         >
           {/* <!-- Background backdrop, show/hide based on slide-over state. --> */}
-          <div className="fixed inset-0 z-50"></div>
-          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          {/* <div className="fixed inset-0 z-50"></div> */}
+          {/* <div className="absolute inset-0 backdrop-blur-md bg-white/10"></div> */}
+          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto backdrop-blur-md bg-white/10 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
               <a href="#" className="-m-1.5 p-1.5">
                 <span className="sr-only">Your Company</span>
@@ -106,7 +109,6 @@ export default function Home() {
                 type="button"
                 className="-m-2.5 rounded-md p-2.5 text-gray-700"
                 onClick={() => {
-                  console.log("hamburger clicked");
                   setHamburgerVisibility(!hamburgerVisibility);
                 }}
               >
