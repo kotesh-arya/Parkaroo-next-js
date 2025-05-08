@@ -40,5 +40,5 @@ yarn-error.log*
 next-env.d.ts
 
 # Secret keys
-firebaseServiceAccountKey.json
+serviceAccountKey.json
 

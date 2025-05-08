@@ -1,23 +1,33 @@
-import admin from "firebase-admin";
+import admin from 'firebase-admin';
+import fs from 'fs';
+import path from 'path';
 
 if (!admin.apps.length) {
-
-    if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-        throw new Error("FIREBASE_SERVICE_ACCOUNT_KEY environment variable is missing");
-    }
-
     try {
-        // Parse the JSON string from the environment variable
-        const serviceAccountKey = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+        let serviceAccount: any;
 
-        // Initialize the Firebase Admin SDK
+        if (process.env.NODE_ENV === 'development') {
+            // Reads serviceAccountKey.json from the project root
+            const filePath = path.join(process.cwd(), 'serviceAccountKey.json');
+            const fileData = fs.readFileSync(filePath, 'utf8');
+            serviceAccount = JSON.parse(fileData);
+        } else {
+            // Reads the key from Render env variable and replaces escaped newlines
+            if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+                throw new Error('FIREBASE_SERVICE_ACCOUNT_KEY env variable is not set');
+            }
+            serviceAccount = JSON.parse(
+                process.env.FIREBASE_SERVICE_ACCOUNT_KEY
+            );
+        }
+
         admin.initializeApp({
-            credential: admin.credential.cert(serviceAccountKey),
+            credential: admin.credential.cert(serviceAccount),
         });
 
-    } catch (error: any) {
-        console.error("Failed to initialize Firebase Admin:", error.message);
-        throw new Error("Invalid FIREBASE_SERVICE_ACCOUNT_KEY");
+        console.log('✅ Firebase Admin initialized');
+    } catch (error) {
+        console.error('❌ Failed to initialize Firebase Admin:', error);
     }
 }
 
