@@ -64,8 +64,9 @@ const Auth = () => {
 
         // Update the user profile with the selected role
         await updateProfile(user, { displayName: role });
-        toast.success("Sign up successful! Please log in.");
-        setIsLogin(true);
+        router.push(role === "owner" ? "/owner" : "/driver");
+        toast.success("Sign up successful!");
+        // setIsLogin(true);
       }
     } catch (error: any) {
       toast.error(`Authentication Error: ${error.message}`);
