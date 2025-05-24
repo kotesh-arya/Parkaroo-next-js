@@ -84,12 +84,10 @@ const DriverPage = () => {
 
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
-        let userName = currentUser.displayName;
-        if (!userName && currentUser.email) {
-          userName = currentUser.email.split("@")[0];
-        }
+        const userName = currentUser.email?.split("@")[0] ?? null;
+
         setUser({
-          userName,
+          userName: userName,
           userEmail: currentUser.email,
           userUID: currentUser.uid,
         });
@@ -111,8 +109,8 @@ const DriverPage = () => {
       setLoading(false);
     } catch (error) {
       setError("Failed to fetch parking spots. Please try again.");
-      console.log("Failed to fetch parking spots:",error);
-      
+      console.log("Failed to fetch parking spots:", error);
+
       setLoading(false);
     }
   };

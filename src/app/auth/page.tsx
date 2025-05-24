@@ -76,12 +76,33 @@ const Auth = () => {
   };
 
   const handleGoogleSignIn = async () => {
+    if (!role) {
+      toast.error("Please select a role: Owner or Driver");
+      return;
+    }
+
     setGoogleSignInLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
-      //  ! Handle Google Sign-In role assignment (optional)
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      console.log("user", user);
+
+      if (user.displayName) {
+        // Google sign-in, set the role
+        await updateProfile(user, { displayName: role });
+      }
+
+      const userRole = user.displayName;
+
+      if (userRole !== role) {
+        toast.error(
+          `Access Denied: You are registered as a ${userRole}, but selected ${role}.`
+        );
+        return;
+      }
+
       toast.success("Signed in with Google successfully!");
-      router.push("/owner");
+      router.push(role === "owner" ? "/owner" : "/driver");
     } catch (error: any) {
       toast.error(`Google Sign-In Error: ${error.message}`);
       console.error(error);
@@ -89,6 +110,7 @@ const Auth = () => {
       setGoogleSignInLoading(false);
     }
   };
+
   const togglePasswordVisibility = () => {
     setPasswordHidden(!passwordHidden);
   };
@@ -106,7 +128,7 @@ const Auth = () => {
         />
       </div> */}
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm shadow-lg p-4 border-2 border-solid rounded-xl ">
+      <div className="mt-32 sm:mx-auto sm:w-full sm:max-w-sm shadow-lg p-4 border-2 border-solid rounded-xl ">
         <h2 className="mt-0 text-center text-2xl/9 font-bold tracking-tight ">
           {isLogin ? "Sign in to your account" : "Create your account"}
         </h2>

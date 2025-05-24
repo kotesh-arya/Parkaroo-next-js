@@ -71,18 +71,17 @@ const OwnerDashboard = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       if (currentUser) {
-        let userName = currentUser.displayName;
-        if (!userName && currentUser.email) {
-          userName = currentUser.email.split("@")[0];
-        }
+        const userName = currentUser.email?.split("@")[0] ?? null;
+
         setUser({
-          userName,
+          userName: userName,
           userEmail: currentUser.email,
           userUID: currentUser.uid,
         });
       } else {
         setUser({ userName: null, userEmail: null });
       }
+
     });
 
     return () => unsubscribe();
