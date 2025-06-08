@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { googleProvider, auth } from "../../../firebase"; // Import your firebase configuration
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -23,50 +24,44 @@ const Auth = () => {
 
   const handleAuth = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (!role) {
       toast.error("Please select a role: Owner or Driver");
       return;
     }
-
+  
     setLoading(true);
     try {
       if (isLogin) {
-        // Log in flow
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+        // Log in
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-
-        // Fetch the user's role from the profile or database
-        const userRole = user.displayName; // Assuming role is stored in `displayName`
-
+        const userRole = user.displayName;
+  
         if (userRole !== role) {
-          toast.error(
-            `Access Denied: You are registered as a ${userRole}, but selected ${role}.`
-          );
+          toast.error(`Access Denied: You are registered as a ${userRole}, but selected ${role}.`);
           return;
         }
-
-        // Redirect based on role
-        router.push(role === "owner" ? "/owner" : "/driver");
+  
+        // ✅ Set role cookie
+        Cookies.set("role", role, { expires: 7, path: "/" });
+  
         toast.success("Signed in successfully!");
-      } else {
-        // Sign-up flow
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        const user = userCredential.user;
-
-        // Update the user profile with the selected role
-        await updateProfile(user, { displayName: role });
         router.push(role === "owner" ? "/owner" : "/driver");
+  
+      } else {
+        // Sign up
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+  
+        // Save role to displayName
+        await updateProfile(user, { displayName: role });
+  
+        // ✅ Set role cookie
+        Cookies.set("role", role, { expires: 7, path: "/" });
+  
         toast.success("Sign up successful!");
-        // setIsLogin(true);
+        router.push(role === "owner" ? "/owner" : "/driver");
       }
     } catch (error: any) {
       toast.error(`Authentication Error: ${error.message}`);
@@ -80,29 +75,30 @@ const Auth = () => {
       toast.error("Please select a role: Owner or Driver");
       return;
     }
-
+  
     setGoogleSignInLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
-      console.log("user", user);
-
+  
       if (user.displayName) {
-        // Google sign-in, set the role
+        // Overwrite Google displayName with selected role
         await updateProfile(user, { displayName: role });
       }
-
+  
       const userRole = user.displayName;
-
+  
       if (userRole !== role) {
-        toast.error(
-          `Access Denied: You are registered as a ${userRole}, but selected ${role}.`
-        );
+        toast.error(`Access Denied: You are registered as a ${userRole}, but selected ${role}.`);
         return;
       }
-
+  
+      // ✅ Set role cookie
+      Cookies.set("role", role, { expires: 7, path: "/" });
+  
       toast.success("Signed in with Google successfully!");
       router.push(role === "owner" ? "/owner" : "/driver");
+  
     } catch (error: any) {
       toast.error(`Google Sign-In Error: ${error.message}`);
       console.error(error);
